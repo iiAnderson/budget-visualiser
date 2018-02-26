@@ -12,9 +12,8 @@ var bubbleChart = {
     currentAgency: null,
 
     chart: function (selector, data) {
-        var width = document.getElementById("vis").clientWidth,
-            height = document.getElementById("vis").clientHeight;
-
+        var width = 1000,
+            height = 600;
 
 
         bubbleChart.centerBudgetState = {
@@ -52,11 +51,11 @@ var bubbleChart = {
             .force('charge', d3.forceManyBody().strength(charge))
             .on('tick', ticked);
 
-        var colour = function(variance){
-            if(variance === "Under"){
-                return "#AED581";
+        var colour = function (variance) {
+            if (variance === "Under") {
+                return "#E5FFE5";
             } else {
-                return "#FF6E40";
+                return "#FFE5E5";
             }
         };
 
@@ -70,12 +69,12 @@ var bubbleChart = {
             });
 
             var sum = 0;
-            for(var i = 0; i < rawData.length; i++){
+            for (var i = 0; i < rawData.length; i++) {
                 sum += rawData[i].value;
             }
 
             var rScale = d3.scaleSqrt()
-                .domain([0, maxAmount > 1000? 1500: maxAmount])
+                .domain([0, maxAmount > 1000 ? 1500 : maxAmount])
                 .range([0, rawData.length > 100 ? 130 : 150]);
 
             var myNodes = rawData.map(function (d) {
@@ -91,6 +90,13 @@ var bubbleChart = {
             return myNodes;
         }
 
+        function dragged(d) {
+
+            d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        }
+
+        var transform = d3.zoomIdentity;
+
         var chart = function chart(selector, rawData) {
             nodes = createNodes(rawData);
 
@@ -101,12 +107,13 @@ var bubbleChart = {
                 .attr('width', width)
                 .attr('height', height);
 
-            bubbleChart.bubbles = bubbleChart.svg.selectAll('.bubble')
-                .data(nodes, function (d) {
-                    return d.label;
-                });
+            var g = bubbleChart.svg;
 
-            bubbleChart.text = bubbleChart.svg.selectAll('text')
+
+            bubbleChart.bubbles = g.selectAll('.bubble')
+                .data(nodes);
+
+            bubbleChart.text = g.selectAll('text')
                 .data(nodes, function (d) {
                     return d.label
                 });
@@ -120,20 +127,19 @@ var bubbleChart = {
                 .attr('stroke', function (d, i) {
                     return d3.rgb(colour(d.variance)).darker();
                 })
-                .attr('id', function(d){return "id_"+d.label;})
+                .attr('id', function (d) {
+                    return "id_" + d.label;
+                })
                 .attr('stroke-width', 2)
                 .on('mouseover', bubbleChart.showTooltip)
                 .on('mouseout', bubbleChart.hideTooltip)
                 .on('click', bubbleChart.handleClick);
 
-            // bubbleChart.svg.call(d3.zoom()
-            //     .scaleExtent([1 / 2, 8])
-            //     .on("zoom", bubbleChart.zoomed));
 
             var newText = bubbleChart.text.enter().append("text")
                 .attr("opacity", 1e-6)
                 .text(function (d) {
-                    return d.radius > 20? d.label: "";
+                    return d.radius > 20 ? d.label : "";
                 })
                 .on('mouseover', bubbleChart.showTooltip)
                 .on('mouseout', bubbleChart.hideTooltip)
@@ -141,6 +147,17 @@ var bubbleChart = {
 
             bubbleChart.bubbles = bubbleChart.bubbles.merge(newBubbles);
             bubbleChart.text = bubbleChart.text.merge(newText);
+
+            var zoom_handler = d3.zoom()
+                .on("zoom", zoom_actions);
+
+            function zoom_actions() {
+                bubbleChart.bubbles.attr("transform", d3.event.transform);
+                bubbleChart.text.attr("transform", d3.event.transform);
+
+            }
+
+            zoom_handler(g);
 
 
             bubbleChart.text.transition()
@@ -157,12 +174,12 @@ var bubbleChart = {
 
             var title = "";
 
-            if(bubbleChart.currentAgency === null){
+            if (bubbleChart.currentAgency === null) {
                 title = "US Government Departments by Allocated Budget";
             } else {
                 var spl = bubbleChart.currentAgency.split("/");
 
-                if(spl.length === 2){
+                if (spl.length === 2) {
                     title = "US Government " + spl[1] + " Investments by Allocated Budget";
                 } else {
                     title = spl[1] + " Investment " + spl[2] + " Projects by Allocated Budget";
@@ -171,11 +188,11 @@ var bubbleChart = {
 
             bubbleChart.svg.append("text")
                 .attr("x", (width / 2))
-                .attr("y", 30)
+                .attr("y", 20)
                 .attr("text-anchor", "middle")
                 .style("font-size", "16px")
                 .style("text-decoration", "underline")
-                .text(title);
+                .text("");
 
             bubbleChart.simulation.nodes(nodes);
 
@@ -203,20 +220,20 @@ var bubbleChart = {
         return chart(selector, data);
     },
 
-    showTooltip: function(evt){
+    showTooltip: function (evt) {
         bubbleChart.tip.show(evt);
 
-        d3.select("#id_item_"+evt.label).classed('active', true);
+        d3.select("#id_item_" + evt.label).classed('active', true);
 
     },
 
-    hideTooltip: function(evt){
+    hideTooltip: function (evt) {
         bubbleChart.tip.hide(evt);
 
-        d3.select("#id_item_"+evt.label).classed('active', false);
+        d3.select("#id_item_" + evt.label).classed('active', false);
     },
 
-    handleClick :function(evt) {
+    handleClick: function (evt) {
         try {
             bubbleChart.tip.hide();
         } catch (e) {
@@ -229,7 +246,7 @@ var bubbleChart = {
 
         console.log("Current Agency " + bubbleChart.currentAgency);
 
-        if(bubbleChart.currentAgency === null) {
+        if (bubbleChart.currentAgency === null) {
             bubbleChart.currentAgency = "/" + evt.name;
 
             DataProcessing.agencyInvestmentData(null, csvData, evt.agency, callback);
@@ -241,7 +258,7 @@ var bubbleChart = {
     },
 
 
-    displayNodesOnSidebar: function(nodes){
+    displayNodesOnSidebar: function (nodes) {
         d3.select("#node-list")
             .selectAll('li')
             .remove();
@@ -252,11 +269,19 @@ var bubbleChart = {
 
         list.enter()
             .append('li')
-            .attr('id', function(d){ return 'id_item_'+d.label})
+            .attr('id', function (d) {
+                return 'id_item_' + d.label
+            })
             .attr("class", "list-group-item")
-            .text(function(d){ return d.name; })
-            .on('mouseover', function(d){ d3.select("#id_"+d.label).attr('stroke-width', 5).attr('stroke-color', 'black'); })
-            .on('mouseout', function(d){ d3.select("#id_"+d.label).attr('stroke-width', 2); })
+            .text(function (d) {
+                return d.name;
+            })
+            .on('mouseover', function (d) {
+                d3.select("#id_" + d.label).attr('stroke-width', 5).attr('stroke-color', 'black');
+            })
+            .on('mouseout', function (d) {
+                d3.select("#id_" + d.label).attr('stroke-width', 2);
+            })
             .on('click', bubbleChart.handleClick);
     },
 
@@ -302,7 +327,7 @@ var bubbleChart = {
             .attr('x', function (d) {
                 return bubbleChart.budgetStateTitleX[d];
             })
-            .attr('y', 40)
+            .attr('y', 80)
             .attr('text-anchor', 'middle')
             .text(function (d) {
                 return d + " Budget";

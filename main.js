@@ -29,6 +29,37 @@ window.onload = function () {
                 resetGraph(null);
                 DataProcessing.resetData(null, csvData, display);
             });
+        d3.select("#node-elem")
+            .on('click', function () {
+
+                console.log(d3.select("#sidebar").classed('active'));
+
+                if (d3.select("#sidebar").classed('active')) {
+                    $('#sidebar').toggleClass('active');
+                    $("#dismiss").toggleClass('active');
+                }
+            });
+        d3.select("#control-elem")
+            .on('click', function () {
+
+                console.log(d3.select("#sidebar").classed('active'));
+
+                if (d3.select("#sidebar").classed('active')) {
+                    $('#sidebar').toggleClass('active');
+                    $("#dismiss").toggleClass('active');
+                }
+            });
+        d3.select("#dismiss")
+            .on('click', function () {
+                if (d3.select("#node-list").classed("show")) {
+                    $('#node-list').collapse('toggle');
+                }
+                if (d3.select("#controlsubmenu").classed("show")) {
+                    $('#controlsubmenu').collapse('toggle');
+                }
+                $('#sidebar').toggleClass('active');
+                $("#dismiss").toggleClass('active');
+            });
 
     }
 
@@ -61,7 +92,7 @@ var resetGraph = function (evt) {
         }
         console.log("removing chart");
         d3.selectAll("svg > *").remove();
-        document.getElementById("vis").innerHTML = "<p id=\"reset\" class=\"reset-btn\"><i class=\"fa fa-refresh\"></i> Reset</p>";
+        document.getElementById("vis").innerHTML = "<p id=\"reset\" class=\"reset-btn\"><i class=\"btn btn-secondary octicon octicon-sync\"></i></p>";
 
         function display(data) {
             console.log(data);
