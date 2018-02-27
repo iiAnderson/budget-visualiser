@@ -55,9 +55,11 @@
     padding: 10px;
 }
 
-.wrapper {
-    display: flex;
+.container {
     height: 800px;
+}
+.body {
+    display: inline-block;
 }
 
 /* Shrinking the sidebar from 250px to 80px and center aligining its content*/
