@@ -18,56 +18,58 @@
 </head>
 <body>
 
-<div class="container">
+<div id="wrapper" class="container">
     <div class="sidebar-wrapper">
-    <nav id="sidebar">
+        <nav id="sidebar">
 
-        <button id="dismiss">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+            <button id="dismiss">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-        <ul class="list-unstyled components">
-            <li id="control-elem" class="active">
-                <a href="#controlsubmenu" data-toggle="collapse" aria-expanded="false">
-                    <i class="octicon octicon-gear"></i>
-                    Control
-                </a>
-                <ul class="collapse list-unstyled" id="controlsubmenu">
-                    <li>
-                        <div id="toolbar" class="btn-group" role="group" style="text-align: center">
-                            <button id="all" type="button" class="btn btn-secondary">Budget</button>
-                            <button id="budgetstate" class="btn btn-secondary">Budget State</button>
-                        </div>
-                    </li>
-                    <li><a href="#">Page 2</a></li>
-                    <li><a href="#">Page 3</a></li>
-                </ul>
-            </li>
-            <li id="node-elem" class="active">
-                <a href="#node-list" data-toggle="collapse" aria-expanded="false">
-                    <i class="octicon octicon-git-commit"></i>
-                    List Nodes
-                </a>
-                <ul id="node-list" class="collapse list-unstyled">
-                </ul>
-            </li>
-        </ul>
+            <ul class="list-unstyled components">
+                <li id="control-elem" class="active">
+                    <a href="#controlsubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="octicon octicon-gear"></i>
+                        Control
+                    </a>
+                    <ul class="collapse list-unstyled" id="controlsubmenu">
+                        <li>
+                            <div id="toolbar" class="btn-group" role="group" style="text-align: center">
+                                <button id="all" type="button" class="btn btn-secondary">Budget</button>
+                                <button id="budgetstate" class="btn btn-secondary">Budget State</button>
+                            </div>
+                        </li>
+                        <li><a href="#">Page 2</a></li>
+                        <li><a href="#">Page 3</a></li>
+                    </ul>
+                </li>
+                <li id="node-elem" class="active">
+                    <a href="#node-list" data-toggle="collapse" aria-expanded="false">
+                        <i class="octicon octicon-git-commit"></i>
+                        List Nodes
+                    </a>
+                    <ul id="node-list" class="collapse list-unstyled">
+                    </ul>
+                </li>
+            </ul>
 
-    </nav>
+        </nav>
+    </div>
 
-    <div class="row" style="padding: 30px;">
-        <div class="card col-md-10">
+    <div style="padding: 30px;" id="page-content-wrapper">
+        <div class="container-fluid">
             <div class="card-block">
                 <h4 id="circle-vis-title" class="card-title"></h4>
                 <div id="vis" class="border-vis">
                     <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
                 </div>
             </div>
+            <div style="background: #6d7fcc;width: 100%; height:200px;">
+
+            </div>
         </div>
-    </div>
-    <div class="row col-md-10" style="background: #6d7fcc;width: 100%; height:200px;">
 
     </div>
 </div>
