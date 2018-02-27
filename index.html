@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Collapsible sidebar using Bootstrap 3</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
-    <link rel="stylesheet" href="index.css">
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -13,64 +18,68 @@
     <script src="ProcessData.js"></script>
     <script src="main.js"></script>
     <script src="BubbleChart.js"></script>
-    <meta charset="UTF-8">
-    <title>Open Data</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-<div id="wrapper" class="container">
-    <div class="sidebar-wrapper">
-        <nav id="sidebar">
 
-            <button id="dismiss">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+<div class="wrapper">
+    <!-- Sidebar Holder -->
+    <nav id="sidebar">
+        <button id="dismiss">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
-            <ul class="list-unstyled components">
-                <li id="control-elem" class="active">
-                    <a href="#controlsubmenu" data-toggle="collapse" aria-expanded="false">
-                        <i class="octicon octicon-gear"></i>
-                        Control
-                    </a>
-                    <ul class="collapse list-unstyled" id="controlsubmenu">
-                        <li>
-                            <div id="toolbar" class="btn-group" role="group" style="text-align: center">
-                                <button id="all" type="button" class="btn btn-secondary">Budget</button>
-                                <button id="budgetstate" class="btn btn-secondary">Budget State</button>
-                            </div>
-                        </li>
-                        <li><a href="#">Page 2</a></li>
-                        <li><a href="#">Page 3</a></li>
-                    </ul>
-                </li>
-                <li id="node-elem" class="active">
-                    <a href="#node-list" data-toggle="collapse" aria-expanded="false">
-                        <i class="octicon octicon-git-commit"></i>
-                        List Nodes
-                    </a>
-                    <ul id="node-list" class="collapse list-unstyled">
-                    </ul>
-                </li>
-            </ul>
+        <ul class="list-unstyled components">
+            <li id="control-elem" class="active">
+                <a href="#controlsubmenu" data-toggle="collapse" aria-expanded="false">
+                    <i class="octicon octicon-gear"></i>
+                    Control
+                </a>
+                <ul class="collapse list-unstyled" id="controlsubmenu">
+                    <li>
+                        <div id="toolbar" class="btn-group" role="group" style="text-align: center">
+                            <button id="all" type="button" class="btn btn-secondary">Budget</button>
+                            <button id="budgetstate" class="btn btn-secondary">Budget State</button>
+                        </div>
+                    </li>
+                    <li><a href="#">Page 2</a></li>
+                    <li><a href="#">Page 3</a></li>
+                </ul>
+            </li>
+            <li id="node-elem" class="active">
+                <a href="#node-list" data-toggle="collapse" aria-expanded="false">
+                    <i class="octicon octicon-git-commit"></i>
+                    List Nodes
+                </a>
+                <ul id="node-list" class="collapse node-list">
+                </ul>
+            </li>
+        </ul>
 
-        </nav>
-    </div>
+    </nav>
 
-    <div style="padding: 30px;" id="page-content-wrapper">
-        <div class="container-fluid">
-            <div class="card-block">
-                <h4 id="circle-vis-title" class="card-title"></h4>
-                <div id="vis" class="border-vis">
-                    <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+    <!-- Page Content Holder -->
+    <div id="content">
+        <div style="padding: 20px;width: 90%;">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+
+                    <div class="card-block">
+                        <h4 id="circle-vis-title" class="card-title">Graph Title</h4>
+                        <div id="vis" class="border-vis" >
+                            <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div style="background: #6d7fcc;width: 100%; height:200px;">
-
-            </div>
+            </nav>
         </div>
 
+        <div style="background: #7386D5;width: 100%; height:300px;">
+
+        </div>
     </div>
 </div>
 </body>

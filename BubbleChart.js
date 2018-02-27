@@ -13,7 +13,7 @@ var bubbleChart = {
 
     chart: function (selector, data) {
         var width = 1000,
-            height = 600;
+            height = 800;
 
 
         bubbleChart.centerBudgetState = {
@@ -90,13 +90,6 @@ var bubbleChart = {
             return myNodes;
         }
 
-        function dragged(d) {
-
-            d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-        }
-
-        var transform = d3.zoomIdentity;
-
         var chart = function chart(selector, rawData) {
             nodes = createNodes(rawData);
 
@@ -159,7 +152,6 @@ var bubbleChart = {
 
             zoom_handler(g);
 
-
             bubbleChart.text.transition()
                 .duration(2000)
                 .attr("opacity", 1);
@@ -221,6 +213,8 @@ var bubbleChart = {
     },
 
     showTooltip: function (evt) {
+        console.log("show tooltip");
+        console.log(evt);
         bubbleChart.tip.show(evt);
 
         d3.select("#id_item_" + evt.label).classed('active', true);
@@ -277,10 +271,10 @@ var bubbleChart = {
                 return d.name;
             })
             .on('mouseover', function (d) {
-                d3.select("#id_" + d.label).attr('stroke-width', 5).attr('stroke-color', 'black');
+                bubbleChart.showTooltip(d);
             })
             .on('mouseout', function (d) {
-                d3.select("#id_" + d.label).attr('stroke-width', 2);
+                bubbleChart.hideTooltip(d);
             })
             .on('click', bubbleChart.handleClick);
     },
@@ -332,11 +326,6 @@ var bubbleChart = {
             .text(function (d) {
                 return d + " Budget";
             });
-    },
-
-    zoomed: function () {
-        bubbleChart.svg.attr("transform", d3.event.transform);
     }
-
 
 };
