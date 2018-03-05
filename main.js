@@ -1,5 +1,6 @@
 var myBubbleChart = null;
 var csvData = [];
+var displayedPieChart = null;
 
 window.onload = function () {
 
@@ -7,21 +8,21 @@ window.onload = function () {
         d3.select('#toolbar')
             .selectAll('.btn')
             .on('click', function () {
-                // Remove active class from all buttons
                 d3.selectAll('.btn').classed('active', false);
-                // Find the button just clicked
                 var button = d3.select(this);
 
-                // Set it as the active button
+                button.classed('active', true);
+                myBubbleChart.toggleDisplay(button.attr('id'));
+            });
+        d3.select("#costMeasure")
+            .selectAll('.btn')
+            .on('click', function () {
+                d3.selectAll('.btn').classed('active', false);
+                var button = d3.select(this);
                 button.classed('active', true);
 
-                // Get the id of the button
-                var buttonId = button.attr('id');
 
-                // Toggle the bubble chart based on
-                // the currently clicked button.
-                console.log("TOGGLE");
-                myBubbleChart.toggleDisplay(buttonId);
+                myBubbleChart.toggleCostMeasure(button.attr('id'));
             });
         d3.select('#reset')
             .on('click', function () {
@@ -66,6 +67,7 @@ window.onload = function () {
     function display(data) {
         console.log(data);
         myBubbleChart.chart('#vis', data);
+        displayedPieChart.chart(data)
     }
 
 
@@ -81,7 +83,6 @@ window.onload = function () {
 };
 
 var resetGraph = function (evt) {
-    console.log(myBubbleChart);
     if (myBubbleChart !== null) {
         if (evt !== null) {
             myBubbleChart.bubbles.transition()
@@ -108,5 +109,6 @@ var resetGraph = function (evt) {
     }
 
     myBubbleChart = bubbleChart;
+    displayedPieChart = pieChart;
 
 };

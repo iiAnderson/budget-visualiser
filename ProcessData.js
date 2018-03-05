@@ -2,6 +2,32 @@
 
 var DataProcessing = {
 
+    costMeasure: "dollar",
+
+    getCostVarianceMetric: function(row){
+        if(DataProcessing.costMeasure === "dollar"){
+            return row["Cost Variance ($ M)"]
+        }
+        return row["Schedule Variance (in days)"]
+    },
+
+    getCostMainMetric: function(row){
+        if(DataProcessing.costMeasure === "dollar"){
+            return row["Projected/Actual Cost ($ M)"];
+        } else {
+            var completion = row["Completion Date (B1)"].split("/");
+            var start = row["Start Date"].split("/");
+            if(completion.length === 0 || start.length === 0){
+                return "";
+            }
+            var startDate = new Date(parseInt(start[2]), parseInt(start[1])-1, parseInt(start[0])),
+                completionDate = new Date(parseInt(completion[2]), parseInt(completion[1])-1, parseInt(completion[0]));
+
+            console.log(Math.round((completionDate-startDate)/(1000*60*60*24)));
+            return Math.round((completionDate-startDate)/(1000*60*60*24));
+        }
+    },
+
     calcVariance: function calcVariance(variance){
         if (variance < 0){
             return "Under";
@@ -15,25 +41,70 @@ var DataProcessing = {
             console.log(error);
         }
 
-        var toReturn = [];
+        var departmentTotals = {};
 
+        console.log(DataProcessing.costMeasure);
         for(var i = 0; i < data.length; i++){
+            if(DataProcessing.getCostVarianceMetric(data[i]) !== "" &&
+                DataProcessing.getCostMainMetric(data[i]) !== "" &&
+                !isNaN(DataProcessing.getCostVarianceMetric(data[i])) &&
+                !isNaN(DataProcessing.getCostMainMetric(data[i]))) {
 
-            if(data[i]["Unique Investment Identifier"] === "Total") {
-                toReturn.push({
+                var obj = {
                     name: data[i]["Agency Name"],
-                    label: data[i]["Agency Name"].split(" ").map(function(d){return d.charAt(0)}).join(""),
-                    variance: DataProcessing.calcVariance(parseFloat(data[i]["Cost Variance (%)"])),
-                    agency: data[i]["Agency Code"],
-                    value: parseFloat(data[i]["Projected/Actual Cost ($ M)"]),
-                    x: Math.random() * 900,
-                    y: Math.random() * 800
-                });
+                    label: data[i]["Agency Name"].split(" ").map(function (d) {
+                        return d.charAt(0)
+                    }).join(""),
+                    variance: parseFloat(DataProcessing.getCostVarianceMetric(data[i])),
+                    value: parseFloat(DataProcessing.getCostMainMetric(data[i]))
+                };
+                console.log(obj);
+
+
+                if (departmentTotals[data[i]["Agency Code"]] !== undefined) {
+                    departmentTotals[data[i]["Agency Code"]].push(obj);
+                } else {
+                    departmentTotals[data[i]["Agency Code"]] = [obj];
+                }
             }
         }
 
-        cb(toReturn);
+        var toReturn = [];
 
+        for(key in departmentTotals) {
+            if(key !== "") {
+
+                if (!departmentTotals.hasOwnProperty(key)) continue;
+
+                var arr = departmentTotals[key];
+                var varianceAvg = 0, valueAvg = 0;
+
+                for (var j = 0; j < arr.length; j++) {
+                    varianceAvg += arr[j].variance;
+                    valueAvg += arr[j].value;
+                }
+                toReturn.push({
+                        name: arr[1].name,
+                        label: arr[1].name.split(" ").map(function (d) {
+                            return d.charAt(0)
+                        }).join(""),
+                        variance: DataProcessing.calcVariance(varianceAvg / arr.length),
+                        agency: key,
+                        value: valueAvg / arr.length,
+                        x: Math.random() * 900,
+                        y: Math.random() * 800
+                    }
+                );
+            }
+        }
+
+        console.log(toReturn);
+        cb(toReturn);
+    },
+
+    switchCostMetric: function(err, data, cb, id){
+        DataProcessing.costMeasure = id;
+        DataProcessing.resetData(err, data, cb);
     },
 
     agencyInvestmentData: function(err, data, agency, cb){

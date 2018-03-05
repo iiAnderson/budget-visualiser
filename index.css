@@ -193,7 +193,14 @@ a[aria-expanded="true"]::before {
 .list-group-item {
     color: #8c8c8c;
 }
+.arc text {
+    font: 10px sans-serif;
+    text-anchor: middle;
+}
 
+.arc path {
+    stroke: #fff;
+}
 
 ul ul a {
     font-size: 0.9em !important;
@@ -201,7 +208,7 @@ ul ul a {
     background: #6d7fcc;
 }
 .active {
-    color: #7386D5;
+    stroke: #7386D5;
     stroke-width: 5px;
 }
 
