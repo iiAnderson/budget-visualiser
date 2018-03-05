@@ -7,9 +7,7 @@ var pieChart = {
     tip: null,
 
     chart: function(data){
-
-
-
+        console.log("PIECHART LOADING ");
         console.log(data);
         pieChart.pie = d3.pie()
             .sort(null)
@@ -23,7 +21,11 @@ var pieChart = {
                     + DataProcessing.getCostMetricText(d.data === undefined? d.value: d.data.value) + "</span>";
             });
 
-        pieChart.svg = d3.select("#pie-svg");
+        pieChart.svg = d3.select("#secondary-graph")
+            .append('svg')
+            .attr('width', 600)
+            .attr('height', 600);
+
         var width = +pieChart.svg.attr("width"),
             height = +pieChart.svg.attr("height"),
             radius = (Math.min(width, height) / 2) -50,
@@ -39,6 +41,9 @@ var pieChart = {
             .data(pieChart.pie(data))
             .enter().append("g")
             .attr("class", "arc")
+            .attr('id', function (d) {
+                return "id_seconditem_" + d.data.name.replace(/\W/g, '').split(" ").join("_");
+            })
             .on('mouseover', pieChart.showTooltip)
             .on('mouseout', pieChart.hideTooltip);
 
@@ -61,18 +66,20 @@ var pieChart = {
     },
 
     showTooltip: function (evt) {
+        console.log(evt);
         pieChart.tip.show(evt);
 
-        // d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
-        // d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
-
+        d3.select("#id_item_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
+        d3.select("#id_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
+        d3.select("#id_seconditem_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
     },
 
     hideTooltip: function (evt) {
         pieChart.tip.hide(evt);
 
-        // d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
-        // d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
+        d3.select("#id_item_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
+        d3.select("#id_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
+        d3.select("#id_seconditem_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
 
     }
 

@@ -1,12 +1,8 @@
-/*
-    DEMO STYLE
-*/
-@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
-
 
 body {
     font-family: 'Poppins', sans-serif;
     background: #fafafa;
+    overflow-x: hidden;
 }
 
 p {
@@ -76,16 +72,20 @@ i, span {
     SIDEBAR STYLE
 ----------------------------------------------------- */
 .wrapper {
-    display: flex;
     align-items: stretch;
 }
 
+.nopadding {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
 #sidebar {
-    min-width: 250px;
-    max-width: 250px;
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
+    position: fixed;
+    height: 100vh;
 }
 
 #sidebar.active {
@@ -213,7 +213,6 @@ ul ul a {
 }
 
 #content {
-    min-height: 100vh;
     transition: all 0.3s;
     width: 100%;
 }
@@ -224,6 +223,7 @@ ul ul a {
         max-width: 80px;
         text-align: center;
         margin-left: -80px !important ;
+        position: fixed;
     }
     a[aria-expanded="false"]::before, a[aria-expanded="true"]::before {
         top: auto;

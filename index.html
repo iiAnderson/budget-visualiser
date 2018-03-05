@@ -24,9 +24,10 @@
 <body>
 
 
-<div class="wrapper">
+<div class="row wrapper">
     <!-- Sidebar Holder -->
-    <nav id="sidebar">
+    <div id="sidebar" class="col-md-2" style="margin: 0px;">
+
         <button id="dismiss">
             <span></span>
             <span></span>
@@ -63,26 +64,25 @@
             </li>
         </ul>
 
-    </nav>
+    </div>
 
     <!-- Page Content Holder -->
-    <div id="content">
-        <div style="padding: 20px;width: 90%;">
+    <div id="content" class="col offset-md-2 nopadding">
+        <div style="width: 90%;padding: 20px">
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
 
-                    <div class="card-block">
+                    <div class="card-block" style="width: 100%;">
                         <h4 id="circle-vis-title" class="card-title">Graph Title</h4>
-                        <div id="vis" class="border-vis" >
-                            <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+                        <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+                        <div id="vis" class="border-vis">
                         </div>
                     </div>
                 </div>
             </nav>
         </div>
 
-        <div style="background: #7386D5;width: 100%;">
-            <svg id="pie-svg" width="600" height="600"></svg>
+        <div id="secondary-graph" style="background: #7386D5;width: 100%;">
         </div>
     </div>
 </div>

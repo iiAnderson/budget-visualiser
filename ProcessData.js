@@ -32,11 +32,27 @@ var DataProcessing = {
         }
     },
 
-    calcVariance: function calcVariance(variance){
-        if (variance < 0){
-            return "Under";
-        } else {
+    calcVariance: function(variance){
+        if (variance > 0){
             return "Over";
+        } else {
+            return "Under";
+        }
+    },
+
+    calcColorCategory: function (variance){
+        if (variance >= 0){
+            if(Math.floor(variance) > 20){
+                return 3;
+            } else {
+                return Math.ceil(variance/10);
+            }
+        } else {
+            if(Math.floor(variance) < -50){
+                return -3;
+            } else {
+                return Math.ceil(variance/10);
+            }
         }
     },
 
@@ -47,7 +63,6 @@ var DataProcessing = {
 
         var departmentTotals = {};
 
-        console.log(DataProcessing.costMeasure);
         for(var i = 0; i < data.length; i++){
             if(DataProcessing.getCostVarianceMetric(data[i]) !== "" &&
                 DataProcessing.getCostMainMetric(data[i]) !== "" &&
@@ -62,7 +77,6 @@ var DataProcessing = {
                     variance: parseFloat(DataProcessing.getCostVarianceMetric(data[i])),
                     value: parseFloat(DataProcessing.getCostMainMetric(data[i]))
                 };
-                console.log(obj);
 
 
                 if (departmentTotals[data[i]["Agency Code"]] !== undefined) {
@@ -96,13 +110,13 @@ var DataProcessing = {
                         agency: key,
                         value: valueAvg / arr.length,
                         x: Math.random() * 900,
-                        y: Math.random() * 800
+                        y: Math.random() * 800,
+                        colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length)
                     }
                 );
             }
         }
 
-        console.log(toReturn);
         cb(toReturn);
     },
 
@@ -154,7 +168,8 @@ var DataProcessing = {
                 agency: agency,
                 value: parseFloat((valueAvg/arr.length)),
                 x: Math.random() * 900,
-                y: Math.random() * 800
+                y: Math.random() * 800,
+                colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length)
             });
         }
 
@@ -208,7 +223,8 @@ var DataProcessing = {
                 agency: agency,
                 value: parseFloat((valueAvg/arr.length)),
                 x: Math.random() * 900,
-                y: Math.random() * 800
+                y: Math.random() * 800,
+                colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length)
             });
         }
 

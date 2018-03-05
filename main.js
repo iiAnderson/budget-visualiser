@@ -91,13 +91,15 @@ var resetGraph = function (evt) {
                     return evt.agency === d.agency ? "1" : "0";
                 });
         }
-        console.log("removing chart");
+        console.log("Resetting\q");
         d3.selectAll("svg > *").remove();
-        document.getElementById("vis").innerHTML = "<p id=\"reset\" class=\"reset-btn\"><i class=\"btn btn-secondary octicon octicon-sync\"></i></p>";
+        document.getElementById("vis").innerHTML = "";
+        document.getElementById("secondary-graph").innerHTML = "";
 
         function display(data) {
-            console.log(data);
+            console.log("Display Data");
             myBubbleChart.chart('#vis', data);
+            displayedPieChart.chart(data)
         }
 
         d3.select('#reset')

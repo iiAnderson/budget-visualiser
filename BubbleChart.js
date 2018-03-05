@@ -12,25 +12,24 @@ var bubbleChart = {
     currentAgency: null,
     years: null,
     g: null,
-    width: 1000,
+    width: 1200,
     height: 800,
     nodes: [],
 
     chart: function (selector, data) {
-        var width = bubbleChart.width,
-            height = bubbleChart.height;
-
+        bubbleChart.width = d3.select(selector).node().getBoundingClientRect().width;
+        console.log("vis width " + bubbleChart.width);
 
         bubbleChart.centerBudgetState = {
-            "Over": {x: width / 3, y: height / 2},
-            "Under": {x: 2 * (width / 3), y: height / 2}
+            "Over": {x: bubbleChart.width / 3, y: bubbleChart.height / 2},
+            "Under": {x: 2 * (bubbleChart.width / 3), y: bubbleChart.height / 2}
         };
 
-        bubbleChart.center = {x: width / 2, y: height / 2};
+        bubbleChart.center = {x: bubbleChart.width / 2, y: bubbleChart.height / 2};
 
         bubbleChart.budgetStateTitleX = {
-            "Over": width / 3,
-            "Under": 2 * (width / 3)
+            "Over": bubbleChart.width / 3,
+            "Under": 2 * (bubbleChart.width / 3)
         };
 
         function charge(d) {
@@ -55,11 +54,19 @@ var bubbleChart = {
             .force('charge', d3.forceManyBody().strength(charge))
             .on('tick', ticked);
 
-        var colour = function (variance) {
-            if (variance === "Under") {
-                return "#E5FFE5";
+        var colours_neg = [d3.rgb("#E5FFE5")];
+        var colours_pos = [d3.rgb("#FFE5E5")];
+
+        for(var i = 1; i < 3; i++){
+            colours_neg.push(colours_neg[i-1].darker());
+            colours_pos.push(colours_pos[i-1].darker());
+        }
+
+        var colour = function (d) {
+            if (d.variance === "Over") {
+                return colours_pos[d.colorCategory];
             } else {
-                return "#FFE5E5";
+                return colours_neg[Math.abs(d.colorCategory)];
             }
         };
 
@@ -101,8 +108,8 @@ var bubbleChart = {
 
             bubbleChart.svg = d3.select(selector)
                 .append('svg')
-                .attr('width', width)
-                .attr('height', height);
+                .attr('width', bubbleChart.width)
+                .attr('height', bubbleChart.height);
 
             bubbleChart.g = bubbleChart.svg;
 
@@ -119,10 +126,10 @@ var bubbleChart = {
                 .classed('bubble', true)
                 .attr('r', 0)
                 .attr('fill', function (d, i) {
-                    return colour(d.variance);
+                    return colour(d);
                 })
                 .attr('stroke', function (d, i) {
-                    return d3.rgb(colour(d.variance)).darker();
+                    return d3.rgb(colour(d)).darker();
                 })
                 .attr('id', function (d) {
                     return "id_" + d.name.replace(/\W/g, '').split(" ").join("_");
@@ -171,6 +178,7 @@ var bubbleChart = {
             bubbleChart.svg.call(bubbleChart.tip);
 
             var title = "";
+            var navigator = "";
 
             if (bubbleChart.currentAgency === null) {
                 title = "US Government Departments by Allocated Budget";
@@ -179,18 +187,22 @@ var bubbleChart = {
 
                 if (spl.length === 2) {
                     title = "US Government " + spl[1] + " Investments by Allocated Budget";
+                    navigator = spl[1];
                 } else {
                     title = spl[1] + " Investment " + spl[2] + " Projects by Allocated Budget";
+                    navigator = spl[1] + " > " + spl[2];
                 }
             }
 
             bubbleChart.svg.append("text")
-                .attr("x", (width / 2))
+                .attr("x", 0)
                 .attr("y", 20)
-                .attr("text-anchor", "middle")
-                .style("font-size", "16px")
-                .style("text-decoration", "underline")
-                .text("");
+                .attr("text-anchor", "left")
+                .style("font-size", "10px")
+                .style("fill", "#A9A9A9")
+                .text(navigator);
+
+            d3.select("#circle-vis-title").text(title);
 
             bubbleChart.simulation.nodes(bubbleChart.nodes);
 
@@ -223,6 +235,7 @@ var bubbleChart = {
 
         d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
         d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
+        d3.select("#id_seconditem_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
 
     },
 
@@ -231,6 +244,7 @@ var bubbleChart = {
 
         d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
         d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
+        d3.select("#id_seconditem_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
 
     },
 
@@ -243,16 +257,16 @@ var bubbleChart = {
 
         function callback(data) {
             bubbleChart.chart("#vis", data);
+            displayedPieChart.chart(data);
         }
 
-        console.log("Current Agency " + bubbleChart.currentAgency);
 
         if (bubbleChart.currentAgency === null) {
-            bubbleChart.currentAgency = "/" + evt.name;
+            bubbleChart.currentAgency = bubbleChart.currentAgency + "/" + evt.name;
 
             DataProcessing.agencyInvestmentData(null, csvData, evt.agency, callback);
         } else {
-            bubbleChart.currentAgency = "/" + evt.name;
+            bubbleChart.currentAgency = bubbleChart.currentAgency + "/" + evt.name;
 
             DataProcessing.agencyData(null, csvData, evt.agency, evt.name, callback);
         }
@@ -282,12 +296,16 @@ var bubbleChart = {
 
                 d3.select("#id_" + id).classed('active', true);
                 d3.select("#id_item_" + id).classed('active', true);
+                d3.select("#id_seconditem_" + id).classed('active', true);
+
             })
             .on('mouseout', function (d) {
                 var id = d.name.replace(/\W/g, '').split(" ").join("_");
 
                 d3.select("#id_" + id).classed('active', false);
                 d3.select("#id_item_" + id).classed('active', false);
+                d3.select("#id_seconditem_" + id).classed('active', false);
+
             })
             .on('click', bubbleChart.handleClick);
     },
@@ -327,8 +345,8 @@ var bubbleChart = {
     splitBubbles: function () {
         bubbleChart.showYears();
 
-        // bubbleChart.simulation.force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.nodeYearPos));
-        // bubbleChart.simulation.alpha(1).restart();
+        bubbleChart.simulation.force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.nodeYearPos));
+        bubbleChart.simulation.alpha(1).restart();
     },
 
     hideYears: function () {
@@ -336,92 +354,22 @@ var bubbleChart = {
     },
 
     showYears: function () {
-        resetGraph(null);
+        // Another way to do this would be to create
+        // the year texts once and then just hide them.
+        var yearsData = d3.keys(bubbleChart.budgetStateTitleX);
+        var years = bubbleChart.svg.selectAll('.year')
+            .data(yearsData);
 
-        var x = d3.scaleLinear().range([0, bubbleChart.width]);
-        var y = d3.scaleLinear().range([bubbleChart.height, 0]);
-
-        var margin = {top: 20, right: 20, bottom: 100, left: 50};
-
-        var colour = function (variance) {
-            if (variance === "Under") {
-                return "#E5FFE5";
-            } else {
-                return "#FFE5E5";
-            }
-        };
-
-        bubbleChart.svg = d3.select('#vis')
-            .append('svg')
-            .attr('width', bubbleChart.width)
-            .attr('height', bubbleChart.height);
-
-        var g = bubbleChart.svg
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-        console.log(bubbleChart.nodes);
-        x.domain([0, d3.max(bubbleChart.nodes, function(d) { return d.agency; })]);
-        y.domain([0, d3.max(bubbleChart.nodes, function(d) { return d.value; })]).nice();
-
-        // Add the X Axis
-        bubbleChart.svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + (bubbleChart.height-30) + ")")
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".3em")
-            .attr("transform", "rotate(-65)");
-
-        // Add the Y Axis
-        bubbleChart.svg.append("g")
-            .attr("class", "axis")
-            .call(d3.axisLeft(y));
-
-        // Add the scatterplot
-        var bubbles = g.selectAll(".bubble")
-            .data(bubbleChart.nodes)
-            .enter().append("circle")
-            .classed('bubble', true)
-            .attr('r', 3)
-            .attr('fill', function (d, i) {
-                return colour(d.variance);
+        years.enter().append('text')
+            .attr('class', 'year')
+            .attr('x', function (d) {
+                return bubbleChart.budgetStateTitleX[d];
             })
-            .attr('stroke', function (d, i) {
-                return d3.rgb(colour(d.variance)).darker();
-            })
-            .attr('id', function (d) {
-                return "id_" + d.name.replace(/\W/g, '').split(" ").join("_");
-            })
-            .attr('stroke-width', 2)
-            .attr("cx", function(d) { return x(d.agency); })
-            .attr("cy", function(d) { return y(d.value); });
-
-        bubbleChart.bubbles = bubbleChart.bubbles.merge(bubbles);
-
-        // bubbleChart.bubbles.transition()
-        //     .duration(2000)
-        //     .attr('r', function (d) {
-        //         return d.radius;
-        //     });
-
-
-        // var yearsData = d3.keys(bubbleChart.budgetStateTitleX);
-        // bubbleChart.years = bubbleChart.g.selectAll('.year')
-        //     .data(yearsData);
-        // bubbleChart.years.enter().append('text')
-        //     .attr('class', 'year')
-        //     .attr('x', function (d) {
-        //         return bubbleChart.budgetStateTitleX[d];
-        //     })
-        //     .attr('y', 80)
-        //     .attr('text-anchor', 'middle')
-        //     .text(function (d) {
-        //         return d + " Budget";
-        //     });
+            .attr('y', 80)
+            .attr('text-anchor', 'middle')
+            .text(function (d) {
+                return d + " Budget";
+            });
     }
 
 };
