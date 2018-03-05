@@ -4,6 +4,10 @@ var DataProcessing = {
 
     costMeasure: "dollar",
 
+    getCostMetricText: function(text){
+        return DataProcessing.costMeasure === "dollar" ? "$ "+ text +" Million": text +" Days";
+    },
+
     getCostVarianceMetric: function(row){
         if(DataProcessing.costMeasure === "dollar"){
             return row["Cost Variance ($ M)"]

@@ -40,7 +40,8 @@ var bubbleChart = {
         bubbleChart.tip = d3.tip()
             .attr('class', 'd3-tip')
             .html(function (d) {
-                return "<strong>" + d.name + ":</strong> <span style='color:red'>$" + d.value + "million</span>";
+                return "<strong>" + d.name + ":</strong> <span style='color:red'>"+
+                    DataProcessing.getCostMetricText(d.data === undefined? d.value: d.data.value)+"</span>";
             });
 
 
