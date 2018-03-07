@@ -1,6 +1,7 @@
 var myBubbleChart = null;
 var csvData = [];
 var displayedPieChart = null;
+var displayedLineChart = null;
 
 window.onload = function () {
 
@@ -50,24 +51,13 @@ window.onload = function () {
                     $("#dismiss").toggleClass('active');
                 }
             });
-        d3.select("#dismiss")
-            .on('click', function () {
-                if (d3.select("#node-list").classed("show")) {
-                    $('#node-list').collapse('toggle');
-                }
-                if (d3.select("#controlsubmenu").classed("show")) {
-                    $('#controlsubmenu').collapse('toggle');
-                }
-                $('#sidebar').toggleClass('active');
-                $("#dismiss").toggleClass('active');
-            });
 
     }
 
     function display(data) {
         console.log(data);
         myBubbleChart.chart('#vis', data);
-        displayedPieChart.chart(data)
+        displayedLineChart.chart(data)
     }
 
 
@@ -99,7 +89,7 @@ var resetGraph = function (evt) {
         function display(data) {
             console.log("Display Data");
             myBubbleChart.chart('#vis', data);
-            displayedPieChart.chart(data)
+            displayedLineChart.chart(data)
         }
 
         d3.select('#reset')
@@ -111,6 +101,6 @@ var resetGraph = function (evt) {
     }
 
     myBubbleChart = bubbleChart;
-    displayedPieChart = pieChart;
+    displayedLineChart = barChart;
 
 };

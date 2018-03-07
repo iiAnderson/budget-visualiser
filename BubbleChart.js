@@ -54,19 +54,19 @@ var bubbleChart = {
             .force('charge', d3.forceManyBody().strength(charge))
             .on('tick', ticked);
 
-        var colours_neg = [d3.rgb("#E5FFE5")];
-        var colours_pos = [d3.rgb("#FFE5E5")];
+        var colours_neg = [d3.rgb("#A5D6A7"), d3.rgb("#66BB6A"), d3.rgb("#43A047")];
+        var colours_pos = [d3.rgb("#FF9E80"), d3.rgb("#FF6E40"), d3.rgb("#FF3D00")];
 
-        for(var i = 1; i < 3; i++){
-            colours_neg.push(colours_neg[i-1].darker());
-            colours_pos.push(colours_pos[i-1].darker());
-        }
+        var colourZero = d3.rgb("#D3D3D3");
 
         var colour = function (d) {
+            if(Math.abs(d.colorCategory) === 0){
+                return colourZero;
+            }
             if (d.variance === "Over") {
-                return colours_pos[d.colorCategory];
+                return colours_pos[d.colorCategory-1];
             } else {
-                return colours_neg[Math.abs(d.colorCategory)];
+                return colours_neg[Math.abs(d.colorCategory)-1];
             }
         };
 
@@ -257,7 +257,7 @@ var bubbleChart = {
 
         function callback(data) {
             bubbleChart.chart("#vis", data);
-            displayedPieChart.chart(data);
+            displayedLineChart.chart(data);
         }
 
 
@@ -318,6 +318,7 @@ var bubbleChart = {
         resetGraph(null);
         function callback(data) {
             bubbleChart.chart("#vis", data);
+            displayedLineChart.chart(data);
         }
 
         DataProcessing.switchCostMetric(null, csvData, callback, costID);

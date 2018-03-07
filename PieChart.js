@@ -31,7 +31,21 @@ var pieChart = {
             radius = (Math.min(width, height) / 2) -50,
             g = pieChart.svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-        var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+        var colours_neg = [d3.rgb("#FFB2B2")];
+        var colours_pos = [d3.rgb("#B2FFB2")];
+
+        for(var i = 1; i < 3; i++){
+            colours_neg.push(colours_neg[i-1].darker(0.5));
+            colours_pos.push(colours_pos[i-1].darker(0.5));
+        }
+
+        var colour = function (d) {
+            if (d.variance === "Over") {
+                return colours_pos[d.colorCategory];
+            } else {
+                return colours_neg[Math.abs(d.colorCategory)];
+            }
+        };
 
         var path = d3.arc()
             .outerRadius(radius - 10)
@@ -51,7 +65,10 @@ var pieChart = {
 
         arc.append("path")
             .attr("d", path)
-            .attr("fill", function(d) { return color(d.value); });
+            .attr('stroke', function (d) {
+                return colour(d.data).darker();
+            })
+            .attr("fill", function(d) { return colour(d.data); });
 
         var pos = d3.arc().innerRadius(radius + 20).outerRadius(radius + 20);
 
@@ -66,7 +83,6 @@ var pieChart = {
     },
 
     showTooltip: function (evt) {
-        console.log(evt);
         pieChart.tip.show(evt);
 
         d3.select("#id_item_" + evt.data.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
@@ -83,4 +99,4 @@ var pieChart = {
 
     }
 
-}
+};

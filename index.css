@@ -29,15 +29,20 @@ a, a:hover, a:focus {
 }
 
 .line {
-    width: 100%;
-    height: 1px;
-    border-bottom: 1px dashed #ddd;
-    margin: 40px 0;
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
 }
 
-i, span {
-    display: inline-block;
+.predictedline {
+    fill: none;
+    stroke: red;
+    stroke-width: 2px;
 }
+
+/*i, span {*/
+    /*display: inline-block;*/
+/*}*/
 
 .d3-tip {
     line-height: 1;
@@ -88,48 +93,8 @@ i, span {
     height: 100vh;
 }
 
-#sidebar.active {
-    min-width: 80px;
-    max-width: 80px;
-    text-align: center;
-}
-
-#sidebar.active .sidebar-header h3, #sidebar.active .CTAs {
-    display: none;
-}
-
-#sidebar.active .sidebar-header strong {
-    display: block;
-}
-
 #sidebar ul li a {
     text-align: left;
-}
-
-#sidebar.active ul li a {
-    padding: 20px 10px;
-    text-align: center;
-    font-size: 0.85em;
-}
-
-#sidebar.active ul li a i {
-    margin-right:  0;
-    display: block;
-    font-size: 1.8em;
-    margin-bottom: 5px;
-}
-
-#sidebar.active ul ul a {
-    padding: 10px !important;
-}
-
-#sidebar.active a[aria-expanded="false"]::before, #sidebar.active a[aria-expanded="true"]::before {
-    top: auto;
-    bottom: 5px;
-    right: 50%;
-    -webkit-transform: translateX(50%);
-    -ms-transform: translateX(50%);
-    transform: translateX(50%);
 }
 
 #sidebar .sidebar-header {
@@ -199,7 +164,58 @@ a[aria-expanded="true"]::before {
 }
 
 .arc path {
-    stroke: #fff;
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 2px;
+}
+
+.legend {
+    display: table-cell;
+    position: fixed;
+}
+
+.dot {
+    height: 45px;
+    width: 45px;
+    background-color: #bbb;
+    border-radius: 50%;
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+.box {
+    text-align: center;
+    vertical-align: middle;
+    display: inline;
+    color: #000;
+}
+
+.greaterTwenty {
+    background-color: #43A047;
+}
+
+.twenty {
+    background-color: #66BB6A;
+}
+
+.ten {
+    background-color: #A5D6A7;
+}
+
+.zero {
+    background-color: #D3D3D3;
+}
+
+.minusTen {
+    background-color: #FF9E80;
+}
+
+.minusTwenty {
+    background-color: #FF6E40;
+}
+
+.minusLessTwenty {
+    background-color: #FF3D00;
 }
 
 ul ul a {
@@ -208,7 +224,11 @@ ul ul a {
     background: #6d7fcc;
 }
 .active {
-    stroke: #7386D5;
+    stroke: #7386D5 !important;
+    stroke-width: 5px;
+}
+.active path {
+    stroke: #7386D5 !important;
     stroke-width: 5px;
 }
 

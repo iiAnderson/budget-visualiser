@@ -1,0 +1,45 @@
+I chose to use Python instead of OpenRefine/Excel for removing errors. This allowed me to
+build a script which can remove all the errors in one, meaning it could be run over future datasets
+instantly to remove the common errors.
+
+Error 1:
+Removing Indented Lines:
+
+Some rows had shifted over several columns, such as all rows within the Department of Commerce.
+In order to easily read and process the data, these rows needed to be shifted back into
+line with the rest of the data. To do this, I wrote a simple python script which iterated over the
+blank spaces at the start of a row, then selecting the first cell with data inside it and setting
+this cell as the the new start of the row.
+
+Error 2:
+Formatting dates:
+
+In order to verify that all the dates were formatted correctly, I uesd the dateutil.parser in python
+to read in every date, then output it in the dd/MM/YYYY format. This altered the dates
+which were in the wrong format (Line 2, in form 2012-30-09 instead of dd/MM/YYYY).
+This needed to be done as javascript requires a specific date format to parse a date into a
+Date object, whereas the python dateutil.parser will attempt to find a format that fits the inputted
+date.
+
+Error 3:
+Incorrect Agency IDs:
+
+Several cells had conflicting Agency Name and Agency ID's. As it was more likely that the agency IDs
+were incorrect (It's easier to incorrectly type a single digit incorrectly than an entire department name)
+I decided to convert all rows with conflicting names and ids to the correct ID. This was done using
+Python, with the correct Agency ID and Name mapped to eachother, searching and replacing the id
+when a conflicing row was found.
+
+Error 4:
+LifeCycle cost containing non numeric characters:
+
+While attempting to parse the Lifecycle Cost column, I noticed that some cells had the postfix ($m) included
+in the data, which broke the javascript number parsers. To remove occurrences of this
+postfix, I used Python to check that if a cell contained ($m), it was removed.
+
+Error 5:
+Removing Agency Project ID column
+
+For all departments, the Agency Project ID is either null, or contains the same project ID as the
+Unique Project ID column. Therefore, the column is not needed so it is removed from
+the output when writing to the out csv using Python.
