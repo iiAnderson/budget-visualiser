@@ -67,7 +67,7 @@ window.onload = function () {
         DataProcessing.resetData(err, data, display);
     }
 
-    d3.csv('out2.csv', processData);
+    d3.csv('out3.csv', processData);
 
     setupButtons();
 };

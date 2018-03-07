@@ -85,8 +85,8 @@ var bubbleChart = {
             }
 
             var rScale = d3.scaleSqrt()
-                .domain([0, maxAmount > 1000 ? 1500 : maxAmount])
-                .range([0, rawData.length > 100 ? 130 : 150]);
+                .domain([0.01, maxAmount])
+                .range([0.01, 600/(rawData.length > 20? Math.sqrt(rawData.length/2.5): 3)]);
 
             var myNodes = rawData.map(function (d) {
                 d.radius = rScale(+parseFloat(d.value));

@@ -15,9 +15,16 @@ var DataProcessing = {
         return row["Schedule Variance (in days)"]
     },
 
+    getCostRadiusFactor: function(){
+        if(DataProcessing.costMeasure === "dollar"){
+            return 2.5;
+        }
+        return 1;
+    },
+
     getCostPredictionMetric: function(row){
         if(DataProcessing.costMeasure === "dollar"){
-            return row["Planned Cost ($ M)"]
+            return row["Planned Cost ($ M)"];
         } else {
             var completion = row["Planned Project Completion Date (B2)"].split("/");
             var start = row["Start Date"].split("/");
@@ -75,9 +82,7 @@ var DataProcessing = {
 
     checkKeysForNan: function(obj) {
             for (var key in obj) {
-                console.log(typeof obj[key] === 'number');
                 if (typeof obj[key] === 'number' && isNaN(obj[key])) {
-                    console.log(key);
                     return false;
                 }
             }
@@ -91,6 +96,7 @@ var DataProcessing = {
 
         var departmentTotals = {};
 
+        //Repurposes each row into an object attached to a its corresponding department
         for(var i = 0; i < data.length; i++){
             if(DataProcessing.getCostVarianceMetric(data[i]) !== "" &&
                 DataProcessing.getCostMainMetric(data[i]) !== "" &&
@@ -98,13 +104,14 @@ var DataProcessing = {
                 !isNaN(DataProcessing.getCostMainMetric(data[i]))) {
 
                 var obj = {
+                    row: i,
+                    value: parseFloat(DataProcessing.getCostMainMetric(data[i])),
+                    plannedValue: parseFloat(DataProcessing.getCostPredictionMetric(data[i])),
                     name: data[i]["Agency Name"],
                     label: data[i]["Agency Name"].split(" ").map(function (d) {
                         return d.charAt(0)
                     }).join(""),
-                    variance: parseFloat(DataProcessing.getCostVarianceMetric(data[i])),
-                    value: parseFloat(DataProcessing.getCostMainMetric(data[i])),
-                    plannedValue: parseFloat(DataProcessing.getCostPredictionMetric(data[i]))
+                    variance: parseFloat(DataProcessing.getCostVarianceMetric(data[i]))
                 };
 
 
@@ -114,9 +121,6 @@ var DataProcessing = {
                     } else {
                         departmentTotals[data[i]["Agency Code"]] = [obj];
                     }
-                } else {
-                    console.log("Object has a Nan property");
-                    console.log(obj);
                 }
             }
         }
@@ -132,10 +136,12 @@ var DataProcessing = {
                 var arr = departmentTotals[key];
                 var varianceAvg = 0, valueAvg = 0, plannedAvg = 0;
 
+
+
                 for (var j = 0; j < arr.length; j++) {
-                    varianceAvg += arr[j].variance;
-                    valueAvg += arr[j].value;
-                    plannedAvg += arr[j].plannedValue;
+                    varianceAvg = varianceAvg + arr[j].variance;
+                    valueAvg = valueAvg + arr[j].value;
+                    plannedAvg = plannedAvg + arr[j].plannedValue;
                 }
 
                 //Handles duplicate labels (case of DoEnergy and DoEducation
@@ -157,15 +163,16 @@ var DataProcessing = {
                 toReturn.push({
                         name: arr[1].name,
                         label: label,
-                        variance: DataProcessing.calcVariance(varianceAvg / arr.length),
+                        variance: DataProcessing.calcVariance(valueAvg/plannedAvg),
                         agency: key,
-                        value: valueAvg / arr.length,
+                        value: valueAvg,
                         x: Math.random() * 900,
                         y: Math.random() * 800,
                         colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
-                        plannedValue: plannedAvg / arr.length
+                        plannedValue: plannedAvg
                     }
                 );
+
             }
         }
 
@@ -219,14 +226,13 @@ var DataProcessing = {
                 label: arr[0].invId,
                 variance: DataProcessing.calcVariance((varianceAvg/arr.length)),
                 agency: agency,
-                value: parseFloat((valueAvg/arr.length)),
+                value: valueAvg,
                 x: Math.random() * 900,
                 y: Math.random() * 800,
                 colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
-                plannedValue: plannedAvg / arr.length
+                plannedValue: plannedAvg
             });
         }
-        console.log(toReturn);
 
         cb(toReturn);
     },
@@ -260,8 +266,7 @@ var DataProcessing = {
             if (!projectTotals.hasOwnProperty(key)) continue;
 
             var arr = projectTotals[key];
-
-            var varianceAvg = 0, valueAvg = 0, plannedAvg = 0;
+            var varianceAvg = 0.0, valueAvg = 0.0, plannedAvg = 0.0;
 
             for (var j = 0; j < arr.length; j++) {
                 varianceAvg += arr[j].variance;
@@ -274,11 +279,11 @@ var DataProcessing = {
                 label: arr[0].projId,
                 variance: DataProcessing.calcVariance((varianceAvg/arr.length)),
                 agency: agency,
-                value: parseFloat((valueAvg/arr.length)),
+                value: valueAvg,
                 x: Math.random() * 900,
                 y: Math.random() * 800,
                 colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
-                plannedValue: plannedAvg / arr.length
+                plannedValue: plannedAvg
             });
         }
 
