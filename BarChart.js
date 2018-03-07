@@ -53,7 +53,7 @@ var barChart = {
             }
         };
 
-        var margin = {top: 20, right: 20, bottom: 40, left: 40};
+        var margin = {top: 20, right: 20, bottom: 40, left: 60};
 
         var nodes = barChart.createNodes(data);
 
@@ -153,7 +153,7 @@ var barChart = {
 
         barChart.svg.append("text")
             .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ -25 +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+            .attr("transform", "translate("+ -40 +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
             .text("Value log2($1,000,000)");
 
 

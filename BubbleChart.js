@@ -64,7 +64,7 @@ var bubbleChart = {
                 return colourZero;
             }
             if (d.variance === "Over") {
-                return colours_pos[d.colorCategory-1];
+                return colours_pos[Math.abs(d.colorCategory)-1];
             } else {
                 return colours_neg[Math.abs(d.colorCategory)-1];
             }
@@ -86,7 +86,7 @@ var bubbleChart = {
 
             var rScale = d3.scaleSqrt()
                 .domain([0.01, maxAmount])
-                .range([0.01, 600/(rawData.length > 20? Math.sqrt(rawData.length/2.5): 3)]);
+                .range([0.01, 600/(rawData.length > 20? Math.sqrt(rawData.length/DataProcessing.getCostRadiusFactor()): 3)]);
 
             var myNodes = rawData.map(function (d) {
                 d.radius = rScale(+parseFloat(d.value));

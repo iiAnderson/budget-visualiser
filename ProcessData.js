@@ -64,18 +64,19 @@ var DataProcessing = {
         }
     },
 
-    calcColorCategory: function (variance){
-        if (variance >= 0){
-            if(Math.floor(variance) > 20){
+    calcColorCategory: function (variance) {
+        var adjustedVar = variance*10;
+        if (adjustedVar >= 0){
+            if(adjustedVar > 2) {
                 return 3;
             } else {
-                return Math.ceil(variance/10);
+                return Math.floor(adjustedVar);
             }
         } else {
-            if(Math.floor(variance) < -50){
+            if(adjustedVar < -2){
                 return -3;
             } else {
-                return Math.ceil(variance/10);
+                return Math.ceil(adjustedVar);
             }
         }
     },
@@ -110,8 +111,7 @@ var DataProcessing = {
                     name: data[i]["Agency Name"],
                     label: data[i]["Agency Name"].split(" ").map(function (d) {
                         return d.charAt(0)
-                    }).join(""),
-                    variance: parseFloat(DataProcessing.getCostVarianceMetric(data[i]))
+                    }).join("")
                 };
 
 
@@ -163,13 +163,14 @@ var DataProcessing = {
                 toReturn.push({
                         name: arr[1].name,
                         label: label,
-                        variance: DataProcessing.calcVariance(valueAvg/plannedAvg),
+                        variance: DataProcessing.calcVariance((valueAvg/plannedAvg)-1),
                         agency: key,
                         value: valueAvg,
                         x: Math.random() * 900,
                         y: Math.random() * 800,
-                        colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
-                        plannedValue: plannedAvg
+                        colorCategory: DataProcessing.calcColorCategory((valueAvg/plannedAvg)-1),
+                        plannedValue: plannedAvg,
+                        varianceValue: (valueAvg/plannedAvg)-1
                     }
                 );
 
@@ -224,12 +225,12 @@ var DataProcessing = {
             toReturn.push({
                 name: key,
                 label: arr[0].invId,
-                variance: DataProcessing.calcVariance((varianceAvg/arr.length)),
+                variance: DataProcessing.calcVariance((valueAvg/plannedAvg)-1),
                 agency: agency,
                 value: valueAvg,
                 x: Math.random() * 900,
                 y: Math.random() * 800,
-                colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
+                colorCategory: DataProcessing.calcColorCategory((valueAvg/plannedAvg)-1),
                 plannedValue: plannedAvg
             });
         }
@@ -277,12 +278,12 @@ var DataProcessing = {
             toReturn.push({
                 name: key,
                 label: arr[0].projId,
-                variance: DataProcessing.calcVariance((varianceAvg/arr.length)),
+                variance: DataProcessing.calcVariance((valueAvg/plannedAvg)-1),
                 agency: agency,
                 value: valueAvg,
                 x: Math.random() * 900,
                 y: Math.random() * 800,
-                colorCategory: DataProcessing.calcColorCategory(varianceAvg / arr.length),
+                colorCategory: DataProcessing.calcColorCategory((valueAvg/plannedAvg)-1),
                 plannedValue: plannedAvg
             });
         }
