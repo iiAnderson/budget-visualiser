@@ -86,7 +86,6 @@ var barChart = {
             return d.label;
         }));
 
-        console.log(nodes);
 
         var valueline = d3.line()
             .x(function(d) { return x(d.label); })
@@ -119,14 +118,17 @@ var barChart = {
             .on("mouseover", barChart.showTooltip)
             .on("mouseout", barChart.hideTooltip);
 
-        // Add the X Axis
+        // Add the x Axis
         barChart.svg.append("g")
             .attr("transform", "translate(0," + height + ")")
+            .classed("xaxis", true)
             .call(d3.axisBottom(x));
 
         // Add the Y Axis
         barChart.svg.append("g")
             .call(d3.axisLeft(y));
+
+        d3.select("#secondary-vis-title").text("Line Graph displaying " + bubbleChart.title);
 
         barChart.svg.selectAll(".xaxis text")  // select all the text elements for the xaxis
             .attr("transform", function(d) {
@@ -154,7 +156,7 @@ var barChart = {
         barChart.svg.append("text")
             .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
             .attr("transform", "translate("+ -40 +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
-            .text("Value log2($1,000,000)");
+            .text("Value log2(" + DataProcessing.getCostMetricText("") + ")");
 
 
     },

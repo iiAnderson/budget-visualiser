@@ -22,6 +22,13 @@ var DataProcessing = {
         return 1;
     },
 
+    getCostMetricTitle: function(){
+        if(DataProcessing.costMeasure === "dollar"){
+            return "Cost ($)";
+        }
+        return "Days to Complete";
+    },
+
     getCostPredictionMetric: function(row){
         if(DataProcessing.costMeasure === "dollar"){
             return row["Planned Cost ($ M)"];

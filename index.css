@@ -13,6 +13,13 @@ p {
     color: #999;
 }
 
+.sidebar-control-header {
+    color: #fff;
+    padding-top: 8px;
+    float: left;
+}
+
+
 a, a:hover, a:focus {
     color: inherit;
     text-decoration: none;
@@ -183,11 +190,22 @@ a[aria-expanded="true"]::before {
     margin: 0 auto;
 }
 
+.info-wrapper {
+    height: 40px;
+    width: 40px;
+    padding-top: 20px;
+    padding-left: 20px;
+}
+
+.reset-btn {
+    display: inline-block;
+}
+
 .box {
     text-align: center;
-    vertical-align: middle;
-    display: inline;
+    padding-top: 10px;
     color: #000;
+    font-size: 0.9em;
 }
 
 .greaterTwenty {
@@ -291,6 +309,11 @@ ul ul a {
         display: none;
     }
 }
+
+.xaxis-line g {
+    display:none;
+}
+
 #dismiss {
     width: 40px;
     height: 40px;
@@ -334,4 +357,39 @@ ul ul a {
 #dismiss.active {
     float: none;
     text-align: center;
+}
+
+/*Modal Popup box*/
+
+.modal-popup {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-popup-content {
+    background-color: #fefefe;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 10%;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    cursor: pointer;
 }

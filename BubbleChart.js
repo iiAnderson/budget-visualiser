@@ -15,6 +15,7 @@ var bubbleChart = {
     width: 1200,
     height: 800,
     nodes: [],
+    title: null,
 
     chart: function (selector, data) {
         bubbleChart.width = d3.select(selector).node().getBoundingClientRect().width;
@@ -39,8 +40,13 @@ var bubbleChart = {
         bubbleChart.tip = d3.tip()
             .attr('class', 'd3-tip')
             .html(function (d) {
+
+                var data = d.data === undefined? d: d.data;
+                var col = data.variance === "Under"? 'color:green': "color:red";
+
                 return "<strong>" + d.name + ":</strong> <span style='color:red'>"+
-                    DataProcessing.getCostMetricText(d.data === undefined? d.value: d.data.value)+"</span>";
+                    DataProcessing.getCostMetricText(data.value)+"</span> </br>" +
+                    "<span style="+col+"> "+(Math.round(Math.abs((((data.value-data.plannedValue)/data.plannedValue)* 100)) * 100)/100)+" </span><strong>% " + data.variance + " Budget</strong> ";
             });
 
 
@@ -177,19 +183,19 @@ var bubbleChart = {
 
             bubbleChart.svg.call(bubbleChart.tip);
 
-            var title = "";
+            bubbleChart.title = "";
             var navigator = "";
 
             if (bubbleChart.currentAgency === null) {
-                title = "US Government Departments by Allocated Budget";
+                bubbleChart.title = "US Government Departments by " + DataProcessing.getCostMetricTitle();
             } else {
                 var spl = bubbleChart.currentAgency.split("/");
 
                 if (spl.length === 2) {
-                    title = "US Government " + spl[1] + " Investments by Allocated Budget";
+                    bubbleChart.title = "US Government " + spl[1] + " Investments by " + DataProcessing.getCostMetricTitle();
                     navigator = spl[1];
                 } else {
-                    title = spl[1] + " Investment " + spl[2] + " Projects by Allocated Budget";
+                    bubbleChart.title = spl[1] + " Investment " + spl[2] + " Projects by " + DataProcessing.getCostMetricTitle();
                     navigator = spl[1] + " > " + spl[2];
                 }
             }
@@ -202,7 +208,7 @@ var bubbleChart = {
                 .style("fill", "#A9A9A9")
                 .text(navigator);
 
-            d3.select("#circle-vis-title").text(title);
+            d3.select("#circle-vis-title").text(bubbleChart.title);
 
             bubbleChart.simulation.nodes(bubbleChart.nodes);
 

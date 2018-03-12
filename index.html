@@ -37,15 +37,21 @@
                 </a>
                 <ul class="collapse list-unstyled" id="controlsubmenu">
                     <li>
-                        <div id="toolbar" class="btn-group" role="group" style="text-align: center">
-                            <button id="all" type="button" class="btn btn-secondary">Budget</button>
-                            <button id="budgetstate" class="btn btn-secondary">Budget State</button>
+                        <p class="sidebar-control-header">Group Data</p>
+                        <div class="text-center">
+                            <div id="toolbar" class="btn-group" role="group" style="text-align: center">
+                                <button id="all" type="button" class="btn btn-secondary">No Grouping</button>
+                                <button id="budgetstate" class="btn btn-secondary">Budget State</button>
+                            </div>
                         </div>
                     </li>
                     <li>
-                        <div id="costMeasure" class="btn-group" role="group" style="text-align: center">
-                            <button id="dollar" type="button" class="btn btn-secondary">Dollar</button>
-                            <button id="time" class="btn btn-secondary">Time</button>
+                        <p class="sidebar-control-header">Cost Measure</p>
+                        <div class="text-center">
+                            <div id="costMeasure" class="btn-group" role="group" style="text-align: center">
+                                <button id="dollar" type="button" class="btn btn-secondary">Dollar</button>
+                                <button id="time" class="btn btn-secondary">Time</button>
+                            </div>
                         </div>
                     </li>
                 </ul>
@@ -69,8 +75,9 @@
                 <div class="container-fluid">
 
                     <div class="card-block" style="width: 100%;">
-                        <h4 id="circle-vis-title" class="card-title">Graph Title</h4>
+                        <h4 id="circle-vis-title" class="card-title"></h4>
                         <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+                        <p id="info" class="reset-btn"><i class="btn btn-secondary octicon octicon-info"></i></p>
                         <div id="vis" class="border-vis">
                         </div>
                     </div>
@@ -95,18 +102,48 @@
         </div>
     </div>
     <div class="col col-md-1" style="padding-top: 50px;">
-        <div class="navbar legend" style="width: 80px;text-align: center;vertical-align: middle;">
-            <h4 style="font-size: 20px;margin: 0 auto;"><b>Legend</b></h4>
-            <p style="font-size: 14px; margin: 0 auto;">Percent over budget:</p>
-            <div class="dot greaterTwenty"><p class="box">>20%</p></div>
-            <div class="dot twenty"><p class="box">20%</p></div>
-            <div class="dot ten"><p class="box">10%</p></div>
+        <div class="navbar legend text-center" style="width: 85px;">
+            <h4 style="font-size: 20px;"><b>Legend</b></h4>
+            <p style="font-size: 14px;">Budget Variance:</p>
+            <div class="dot greaterTwenty"><p class="box"><-20%</p></div>
+            <div class="dot twenty"><p class="box">-20%</p></div>
+            <div class="dot ten"><p class="box">-10%</p></div>
             <div class="dot zero"><p class="box">0%</p></div>
-            <div class="dot minusTen"><p class="box">-10%</p></div>
-            <div class="dot minusTwenty"><p class="box">-20%</p></div>
-            <div class="dot minusLessTwenty"><p class="box"><-20%</p></div>
+            <div class="dot minusTen"><p class="box">10%</p></div>
+            <div class="dot minusTwenty"><p class="box">20%</p></div>
+            <div class="dot minusLessTwenty"><p class="box">>20%</p></div>
         </div>
     </div>
+
+    <div id="descPopup" class="modal-popup">
+
+        <!-- Modal content -->
+        <div class="modal-popup-content">
+            <span id="closePopup" class="close">&times;</span>
+            <h4>Welcome to Department Budget Visualisations</h4>
+            <p>This visualisation is aimed to allow managers to explore the data in a clear and understandable environment.</p>
+            <h4>How is this achieved?</h4>
+
+            <p>This is achieved through several different mechanisms, designed for ease of use:</p>
+
+            <p>The Sidebar contains a set of controls, which allow grouping of the data and altering the cost metric used to create the visualisations.
+            The sidebar also contains a list of the nodes displayed in the visualisations, which can be highlighted by hovering over, and clicked on
+            to narrow down the data in the visualisation.</p>
+
+            <p>The Main Visualisation allows a user to quickly see which projects are over/under budget through the use of the legend. It also allows
+            easy navigation of the data through clicking on a specific circle, which narrows down the visualisation to that subset of data, allowing
+            overbudget projects/investments to be easily identified.
+            This visualisation can also be zoomed in/out for ease of viewing.</p>
+
+            <p>The Secondary Visualisation allows a user to quickly compare the nodes against eachother and against the planned budget for the selected
+            cost metric.</p>
+
+            <p>As the sidebar and the two visualisations are connected, any changes made (such as clicking on a department) will alter all aspects of
+            the visualisation, this also includes highlighting nodes and hovering over to provide tooltips.</p>
+        </div>
+
+    </div>
+
 </div>
 </body>
 </html>

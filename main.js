@@ -3,6 +3,8 @@ var csvData = [];
 var displayedPieChart = null;
 var displayedLineChart = null;
 
+
+
 window.onload = function () {
 
     function setupButtons() {
@@ -50,6 +52,24 @@ window.onload = function () {
                     $('#sidebar').toggleClass('active');
                     $("#dismiss").toggleClass('active');
                 }
+            });
+
+        var popup = d3.select('#descPopup');
+        var closePopup = d3.select('#closePopup');
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("descPopup")) {
+                popup.attr('style', 'display:none');
+            }
+        };
+
+        d3.select('#info')
+            .on('click', function () {
+            popup.attr('style', 'display:block');
+        });
+        closePopup
+            .on('click', function () {
+                popup.attr('style', 'display:none');
             });
 
     }
