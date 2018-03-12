@@ -1,4 +1,4 @@
-var myBubbleChart = null;
+var displayedBubbleChart = null;
 var csvData = [];
 var displayedPieChart = null;
 var displayedLineChart = null;
@@ -15,7 +15,7 @@ window.onload = function () {
                 var button = d3.select(this);
 
                 button.classed('active', true);
-                myBubbleChart.toggleDisplay(button.attr('id'));
+                displayedBubbleChart.toggleDisplay(button.attr('id'));
             });
         d3.select("#costMeasure")
             .selectAll('.btn')
@@ -25,7 +25,7 @@ window.onload = function () {
                 button.classed('active', true);
 
 
-                myBubbleChart.toggleCostMeasure(button.attr('id'));
+                displayedBubbleChart.toggleCostMeasure(button.attr('id'));
             });
         d3.select('#reset')
             .on('click', function () {
@@ -76,7 +76,7 @@ window.onload = function () {
 
     function display(data) {
         console.log(data);
-        myBubbleChart.chart('#vis', data);
+        displayedBubbleChart.chart('#vis', data);
         displayedLineChart.chart(data)
     }
 
@@ -93,9 +93,9 @@ window.onload = function () {
 };
 
 var resetGraph = function (evt) {
-    if (myBubbleChart !== null) {
+    if (displayedBubbleChart !== null) {
         if (evt !== null) {
-            myBubbleChart.bubbles.transition()
+            displayedBubbleChart.bubbles.transition()
                 .duration(2000)
                 .attr("opacity", function (d) {
                     return evt.agency === d.agency ? "1" : "0";
@@ -108,7 +108,7 @@ var resetGraph = function (evt) {
 
         function display(data) {
             console.log("Display Data");
-            myBubbleChart.chart('#vis', data);
+            displayedBubbleChart.chart('#vis', data);
             displayedLineChart.chart(data)
         }
 
@@ -120,7 +120,7 @@ var resetGraph = function (evt) {
             });
     }
 
-    myBubbleChart = bubbleChart;
-    displayedLineChart = barChart;
+    displayedBubbleChart = bubbleChart;
+    displayedLineChart = scatterChart;
 
 };

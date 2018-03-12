@@ -1,9 +1,12 @@
 I chose to use Python instead of OpenRefine/Excel for removing errors. This allowed me to
 build a script which can remove all the errors in one, meaning it could be run over future datasets
-instantly to remove the common errors.
+instantly to remove the common errors. It would have been possible to fix all of these errors in OpenRefine using
+the query language (GREL) and replacing the row with the correct data, but I felt that using python is a
+better solution, as it is easily extensible and can be easily reused.
 
 Error 1:
 Removing Indented Lines:
+Example: Rows 180-454
 
 Some rows had shifted over several columns, such as all rows within the Department of Commerce.
 In order to easily read and process the data, these rows needed to be shifted back into
@@ -13,29 +16,33 @@ this cell as the the new start of the row.
 
 Error 2:
 Formatting dates:
+Example: Row 7, in form 2012-30-09
 
-In order to verify that all the dates were formatted correctly, I uesd the dateutil.parser in python
+In order to verify that all the dates were formatted correctly, I used the dateutil.parser in python
 to read in every date, then output it in the dd/MM/YYYY format. This altered the dates
-which were in the wrong format (Line 2, in form 2012-30-09 instead of dd/MM/YYYY).
+which were in the wrong format.
 This needed to be done as javascript requires a specific date format to parse a date into a
 Date object, whereas the python dateutil.parser will attempt to find a format that fits the inputted
-date.
+date so any type of format could have been used at it would have not broken the script.
 
 Error 3:
 Incorrect Agency IDs:
+Example: Row 16, ID:6, Name:Department of Agriculture
 
 Several cells had conflicting Agency Name and Agency ID's. As it was more likely that the agency IDs
 were incorrect (It's easier to incorrectly type a single digit incorrectly than an entire department name)
 I decided to convert all rows with conflicting names and ids to the correct ID. This was done using
-Python, with the correct Agency ID and Name mapped to eachother, searching and replacing the id
-when a conflicing row was found.
+Python, with the correct Agency ID and Name mapped to each other manually, then writing a function to search and replace
+the id when a conflicting name/id was found.
 
 Error 4:
 LifeCycle cost containing non numeric characters:
+Example: Row 28, 2.306 ($m)
 
 While attempting to parse the Lifecycle Cost column, I noticed that some cells had the postfix ($m) included
 in the data, which broke the javascript number parsers. To remove occurrences of this
-postfix, I used Python to check that if a cell contained ($m), it was removed.
+postfix, I used Python to check that if a cell contained ($m) and if it did, replace it with the empty string, which
+would not affect the number parsing.
 
 Error 5:
 Removing Agency Project ID column

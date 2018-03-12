@@ -37,6 +37,7 @@ var bubbleChart = {
             return -Math.pow(d.radius, 2.0) / 4;
         }
 
+        //Creates the tooltip
         bubbleChart.tip = d3.tip()
             .attr('class', 'd3-tip')
             .html(function (d) {
@@ -50,9 +51,7 @@ var bubbleChart = {
             });
 
 
-        // Here we create a force layout and
-        // @v4 We create a force simulation now and
-        //  add forces to it.
+        //Simulation allows the nodes to move based on a given location
         bubbleChart.simulation = d3.forceSimulation()
             .velocityDecay(0.4)
             .force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.center.x))
@@ -60,11 +59,12 @@ var bubbleChart = {
             .force('charge', d3.forceManyBody().strength(charge))
             .on('tick', ticked);
 
+        // Legend Colours to be used for colouring nodes
         var colours_neg = [d3.rgb("#A5D6A7"), d3.rgb("#66BB6A"), d3.rgb("#43A047")];
         var colours_pos = [d3.rgb("#FF9E80"), d3.rgb("#FF6E40"), d3.rgb("#FF3D00")];
-
         var colourZero = d3.rgb("#D3D3D3");
 
+        // Colour selection function
         var colour = function (d) {
             if(Math.abs(d.colorCategory) === 0){
                 return colourZero;
@@ -76,6 +76,7 @@ var bubbleChart = {
             }
         };
 
+        //Function to create the nodes from Raw Data, and create Sqrt scale for sizing nodes
         function createNodes(rawData) {
             // Use map() to convert raw data into node data.
             // Checkout http://learnjsdata.com/ for more on
@@ -90,6 +91,8 @@ var bubbleChart = {
                 sum += rawData[i].value;
             }
 
+            //Scaling function, these are mostly manually inputted as they work for **MOST** screen sizes, but very
+            //difficult to test for.
             var rScale = d3.scaleSqrt()
                 .domain([0.01, maxAmount])
                 .range([0.01, 600/(rawData.length > 20? Math.sqrt(rawData.length/DataProcessing.getCostRadiusFactor()): 3)]);
@@ -103,10 +106,10 @@ var bubbleChart = {
                 return b.value - a.value;
             });
 
-
             return myNodes;
         }
 
+        // Create the chart
         var chart = function chart(selector, rawData) {
             bubbleChart.nodes = createNodes(rawData);
 
@@ -119,15 +122,17 @@ var bubbleChart = {
 
             bubbleChart.g = bubbleChart.svg;
 
-
+            // Create the node
             bubbleChart.bubbles = bubbleChart.g.selectAll('.bubble')
                 .data(bubbleChart.nodes);
 
+            // Create node label
             bubbleChart.text = bubbleChart.g.selectAll('text')
                 .data(bubbleChart.nodes, function (d) {
                     return d.label
                 });
 
+            // Create the node with the given data
             var newBubbles = bubbleChart.bubbles.enter().append('circle')
                 .classed('bubble', true)
                 .attr('r', 0)
@@ -145,7 +150,7 @@ var bubbleChart = {
                 .on('mouseout', bubbleChart.hideTooltip)
                 .on('click', bubbleChart.handleClick);
 
-
+            // Create the node label with the given data
             var newText = bubbleChart.text.enter().append("text")
                 .attr("opacity", 1e-6)
                 .text(function (d) {
@@ -155,6 +160,7 @@ var bubbleChart = {
                 .on('mouseout', bubbleChart.hideTooltip)
                 .on('click', bubbleChart.handleClick);
 
+            // Merge the newly created data with the previous data set (should be [], but can not be in cases)
             bubbleChart.bubbles = bubbleChart.bubbles.merge(newBubbles);
             bubbleChart.text = bubbleChart.text.merge(newText);
 
@@ -169,6 +175,7 @@ var bubbleChart = {
                 }
             }
 
+            // Create the zoom handler to manage the redrawing of nodes on the scrolled/zoomed canvas
             zoom_handler(bubbleChart.g);
 
             bubbleChart.text.transition()
@@ -183,6 +190,7 @@ var bubbleChart = {
 
             bubbleChart.svg.call(bubbleChart.tip);
 
+            // Create the title for the visualisation based on the data being viewed by the user
             bubbleChart.title = "";
             var navigator = "";
 
@@ -236,6 +244,7 @@ var bubbleChart = {
         return chart(selector, data);
     },
 
+    //Shows the tooltip to the user
     showTooltip: function (evt) {
         bubbleChart.tip.show(evt);
 
@@ -245,6 +254,7 @@ var bubbleChart = {
 
     },
 
+    //Hides the tooltip from the user
     hideTooltip: function (evt) {
         bubbleChart.tip.hide(evt);
 
@@ -254,6 +264,7 @@ var bubbleChart = {
 
     },
 
+    // Handles a user clicking on a clickable node (either in node-list or a node in the bubble chart)
     handleClick: function (evt) {
         try {
             bubbleChart.tip.hide();
@@ -278,7 +289,7 @@ var bubbleChart = {
         }
     },
 
-
+    // Displays the node-list on the sidebar
     displayNodesOnSidebar: function (nodes) {
         d3.select("#node-list")
             .selectAll('li')
@@ -316,6 +327,7 @@ var bubbleChart = {
             .on('click', bubbleChart.handleClick);
     },
 
+    // Toggles between dollar/time
     toggleCostMeasure: function(costID){
         try {
             bubbleChart.tip.hide();
@@ -330,6 +342,7 @@ var bubbleChart = {
         DataProcessing.switchCostMetric(null, csvData, callback, costID);
     },
 
+    // Toggles between Random/Budget State grouping of nodes
     toggleDisplay: function (displayName) {
         if (displayName === 'budgetstate') {
             bubbleChart.splitBubbles();
@@ -338,31 +351,35 @@ var bubbleChart = {
         }
     },
 
+    //Performs the grouping, can be easily extended to further groupings if needed
     groupBubbles: function () {
-        bubbleChart.hideYears();
+        bubbleChart.hideStateLabels();
 
         bubbleChart.simulation.force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.center.x));
         bubbleChart.simulation.alpha(1).restart();
     },
 
-    nodeYearPos: function (d) {
+    // Gets the location needed for the node center
+    nodeStatePosition: function (d) {
         return bubbleChart.centerBudgetState[d.variance].x;
     },
 
+    //Splits the bubbles using the force to move them to the correct side of the graph.
     splitBubbles: function () {
-        bubbleChart.showYears();
+        bubbleChart.showStateLabels();
 
-        bubbleChart.simulation.force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.nodeYearPos));
+        bubbleChart.simulation.force('x', d3.forceX().strength(bubbleChart.forceStrength).x(bubbleChart.nodeStatePosition));
         bubbleChart.simulation.alpha(1).restart();
     },
 
-    hideYears: function () {
+    //Hides (removes) the state labels for the grouping
+    hideStateLabels: function () {
         bubbleChart.svg.selectAll('.year').remove();
     },
 
-    showYears: function () {
-        // Another way to do this would be to create
-        // the year texts once and then just hide them.
+    //Shows (creates) the state labels for the grouping
+    showStateLabels: function () {
+
         var yearsData = d3.keys(bubbleChart.budgetStateTitleX);
         var years = bubbleChart.svg.selectAll('.year')
             .data(yearsData);

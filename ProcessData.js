@@ -26,7 +26,7 @@ var DataProcessing = {
         if(DataProcessing.costMeasure === "dollar"){
             return "Cost ($)";
         }
-        return "Days to Complete";
+        return "Cost (Work Days)";
     },
 
     getCostPredictionMetric: function(row){
