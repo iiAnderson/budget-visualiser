@@ -246,11 +246,13 @@ var bubbleChart = {
 
     //Shows the tooltip to the user
     showTooltip: function (evt) {
+        console.log(d3.select("#legend_colorcategory" + evt.colorCategory));
         bubbleChart.tip.show(evt);
 
         d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
         d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
         d3.select("#id_seconditem_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
+        d3.select("#legend_colorcategory" + evt.colorCategory).classed('active-legend', true);
 
     },
 
@@ -261,7 +263,7 @@ var bubbleChart = {
         d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
         d3.select("#id_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
         d3.select("#id_seconditem_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', false);
-
+        d3.select("#legend_colorcategory" + evt.colorCategory).classed('active-legend', false);
     },
 
     // Handles a user clicking on a clickable node (either in node-list or a node in the bubble chart)

@@ -158,6 +158,19 @@ var scatterChart = {
             .attr("transform", "translate("+ -40 +","+(height/2)+")rotate(-90)")
             .text("Value log2(" + DataProcessing.getCostMetricText("") + ")");
 
+        var legend = scatterChart.svg.selectAll(".legend").data([{"label":"Actual", "class": "steelblue"}, {"label":"Planned", "class":"red"}])
+            .enter().append("g")
+            // .attr("class", function(d){return d.class})
+            .attr("transform", function (d,i) {
+                return "translate(" + (width-100) + "," + (5+(-(i*20)))+")";
+            });
+
+        legend.append("text").text(function (d) {return d.label;})
+            .attr("transform", "translate(15,9)"); //align texts with boxes
+
+        legend.append("rect")
+            .attr("fill", function (d, i) {return d3.color(d.class)})
+            .attr("width", 10).attr("height", 10);
 
     },
 
