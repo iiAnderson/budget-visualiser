@@ -7,31 +7,56 @@ var bubbleChart = {
     center: null,
     simulation: null,
     svg: null,
-    forceStrength: 0.2,
+    forceStrength: 0.3,
     tip: null,
     currentAgency: null,
     years: null,
     g: null,
     width: 1200,
-    height: 800,
+    height: 600,
     nodes: [],
     title: null,
 
     chart: function (selector, data) {
         bubbleChart.width = d3.select(selector).node().getBoundingClientRect().width;
-        console.log("vis width " + bubbleChart.width);
+
+        // bubbleChart.centerBudgetState = {
+        //     "Over": { x: bubbleChart.width / 3, y: bubbleChart.height / 2 },
+        //     "Under": { x: 2 * (bubbleChart.width / 3), y: bubbleChart.height / 2 }
+        // };
 
         bubbleChart.centerBudgetState = {
-            "Over": {x: bubbleChart.width / 3, y: bubbleChart.height / 2},
-            "Under": {x: 2 * (bubbleChart.width / 3), y: bubbleChart.height / 2}
+            "100": { x: bubbleChart.width / 12, y: bubbleChart.height / 2 },
+            "80": { x: 2 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "60": { x: 3 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "40": { x: 4 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "20": { x: 5 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "0": { x: 6 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-0": { x: 6 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-20": { x: 7 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-40": { x: 8 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-60": { x: 9 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-80": { x: 10 * (bubbleChart.width / 12), y: bubbleChart.height / 2 },
+            "-100": { x: 11 * (bubbleChart.width / 12), y: bubbleChart.height / 2 }
         };
 
-        bubbleChart.center = {x: bubbleChart.width / 2, y: bubbleChart.height / 2};
+        bubbleChart.center = { x: bubbleChart.width / 2, y: bubbleChart.height / 2 };
 
         bubbleChart.budgetStateTitleX = {
-            "Over": bubbleChart.width / 3,
-            "Under": 2 * (bubbleChart.width / 3)
+            "+100%": bubbleChart.width / 12,
+            "+80%": 2 * (bubbleChart.width / 12),
+            "+60%": 3 * (bubbleChart.width / 12),
+            "+40%": 4 * (bubbleChart.width / 12),
+            "+20%": 5 * (bubbleChart.width / 12),
+            "+0%": 6 * (bubbleChart.width / 12),
+            "-20%": 7 * (bubbleChart.width / 12),
+            "-40%": 8 * (bubbleChart.width / 12),
+            "-60%": 9 * (bubbleChart.width / 12),
+            "-80%": 10 * (bubbleChart.width / 12),
+            "-100%": 11 * (bubbleChart.width / 12),
         };
+
+
 
         function charge(d) {
             return -Math.pow(d.radius, 2.0) / 4;
@@ -42,12 +67,12 @@ var bubbleChart = {
             .attr('class', 'd3-tip')
             .html(function (d) {
 
-                var data = d.data === undefined? d: d.data;
-                var col = data.variance === "Under"? 'color:green': "color:red";
+                var data = d.data === undefined ? d : d.data;
+                var col = data.variance === "Under" ? 'color:green' : "color:red";
 
-                return "<strong>" + d.name + ":</strong> <span style='color:red'>"+
-                    DataProcessing.getCostMetricText(data.value)+"</span> </br>" +
-                    "<span style="+col+"> "+(Math.round(Math.abs((((data.value-data.plannedValue)/data.plannedValue)* 100)) * 100)/100)+" </span><strong>% " + data.variance + " Budget</strong> ";
+                return "<strong>" + d.name + ":</strong> <span style='color:red'>" +
+                    DataProcessing.getCostMetricText(data.value) + "</span> </br>" +
+                    "<span style=" + col + "> " + (Math.round(Math.abs((((data.value - data.plannedValue) / data.plannedValue) * 100)) * 100) / 100) + " </span><strong>% " + data.variance + " Budget</strong> ";
             });
 
 
@@ -60,21 +85,48 @@ var bubbleChart = {
             .on('tick', ticked);
 
         // Legend Colours to be used for colouring nodes
-        var colours_neg = [d3.rgb("#A5D6A7"), d3.rgb("#66BB6A"), d3.rgb("#43A047")];
-        var colours_pos = [d3.rgb("#FF9E80"), d3.rgb("#FF6E40"), d3.rgb("#FF3D00")];
+        var coloursNeg = d3.scaleLinear()
+            .domain([0, 500])
+            .range(["#D3D3D3", "#A5D6A7", "#8db58f"]);
+
+        var coloursPos = d3.scaleLinear()
+            .domain([0, 500])
+            .range(["#D3D3D3", "#ff9e80", "#ff440a", "#6c1a00"]);
+
         var colourZero = d3.rgb("#D3D3D3");
 
-        // Colour selection function
         var colour = function (d) {
-            if(Math.abs(d.colorCategory) === 0){
-                return colourZero;
-            }
+            var colourList = [];
             if (d.variance === "Over") {
-                return colours_pos[Math.abs(d.colorCategory)-1];
+                colourList = coloursPos;
             } else {
-                return colours_neg[Math.abs(d.colorCategory)-1];
+                colourList = coloursNeg;
             }
-        };
+
+            var modVariance = Math.abs(d.varianceValue * 100);
+            var colourValue = (Math.ceil(modVariance * 10) / 10).toFixed(2);
+
+            if (colourValue >= 500) {
+                return colourList(500);
+            } else {
+                return colourList(colourValue / 0.05);
+            }
+
+            return colourZero;
+
+        }
+
+        // // Colour selection function
+        // var colour = function (d) {
+        //     if (Math.abs(d.colorCategory) === 0) {
+        //         return colourZero;
+        //     }
+        //     if (d.variance === "Over") {
+        //         return colours_pos[Math.abs(d.colorCategory) - 1];
+        //     } else {
+        //         return colours_neg[Math.abs(d.colorCategory) - 1];
+        //     }
+        // };
 
         //Function to create the nodes from Raw Data, and create Sqrt scale for sizing nodes
         function createNodes(rawData) {
@@ -95,7 +147,7 @@ var bubbleChart = {
             //difficult to test for.
             var rScale = d3.scaleSqrt()
                 .domain([0.01, maxAmount])
-                .range([0.01, 600/(rawData.length > 20? Math.sqrt(rawData.length/DataProcessing.getCostRadiusFactor()): 3)]);
+                .range([0.01, 600 / (rawData.length > 20 ? Math.sqrt(rawData.length / DataProcessing.getCostRadiusFactor()) : 3)]);
 
             var myNodes = rawData.map(function (d) {
                 d.radius = rScale(+parseFloat(d.value));
@@ -170,7 +222,7 @@ var bubbleChart = {
             function zoom_actions() {
                 bubbleChart.bubbles.attr("transform", d3.event.transform);
                 bubbleChart.text.attr("transform", d3.event.transform);
-                if(bubbleChart.years !== null){
+                if (bubbleChart.years !== null) {
                     bubbleChart.years.attr("transform", d3.event.transform);
                 }
             }
@@ -246,7 +298,6 @@ var bubbleChart = {
 
     //Shows the tooltip to the user
     showTooltip: function (evt) {
-        console.log(d3.select("#legend_colorcategory" + evt.colorCategory));
         bubbleChart.tip.show(evt);
 
         d3.select("#id_item_" + evt.name.replace(/\W/g, '').split(" ").join("_")).classed('active', true);
@@ -276,7 +327,6 @@ var bubbleChart = {
 
         function callback(data) {
             bubbleChart.chart("#vis", data);
-            displayedLineChart.chart(data);
         }
 
 
@@ -330,7 +380,7 @@ var bubbleChart = {
     },
 
     // Toggles between dollar/time
-    toggleCostMeasure: function(costID){
+    toggleCostMeasure: function (costID) {
         try {
             bubbleChart.tip.hide();
         } catch (e) {
@@ -338,7 +388,6 @@ var bubbleChart = {
         resetGraph(null);
         function callback(data) {
             bubbleChart.chart("#vis", data);
-            displayedLineChart.chart(data);
         }
 
         DataProcessing.switchCostMetric(null, csvData, callback, costID);
@@ -363,7 +412,18 @@ var bubbleChart = {
 
     // Gets the location needed for the node center
     nodeStatePosition: function (d) {
-        return bubbleChart.centerBudgetState[d.variance].x;
+        var variance = d.varianceValue * 100;
+
+        var value = Math.ceil(variance.toFixed() / 20) * 20;
+
+        if (value > 100) {
+            value = 100
+        }
+        if (value < -100) {
+            value = -100;
+        }
+
+        return bubbleChart.centerBudgetState[value.toString()].x;
     },
 
     //Splits the bubbles using the force to move them to the correct side of the graph.
@@ -394,7 +454,7 @@ var bubbleChart = {
             .attr('y', 80)
             .attr('text-anchor', 'middle')
             .text(function (d) {
-                return d + " Budget";
+                return d + "";
             });
     }
 

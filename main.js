@@ -1,8 +1,6 @@
 var displayedBubbleChart = null;
 var csvData = [];
 var displayedPieChart = null;
-var displayedLineChart = null;
-
 
 
 window.onload = function () {
@@ -57,7 +55,7 @@ window.onload = function () {
         var popup = d3.select('#descPopup');
         var closePopup = d3.select('#closePopup');
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == document.getElementById("descPopup")) {
                 popup.attr('style', 'display:none');
             }
@@ -65,8 +63,8 @@ window.onload = function () {
 
         d3.select('#info')
             .on('click', function () {
-            popup.attr('style', 'display:block');
-        });
+                popup.attr('style', 'display:block');
+            });
         closePopup
             .on('click', function () {
                 popup.attr('style', 'display:none');
@@ -77,7 +75,6 @@ window.onload = function () {
     function display(data) {
         console.log(data);
         displayedBubbleChart.chart('#vis', data);
-        displayedLineChart.chart(data)
     }
 
 
@@ -104,12 +101,10 @@ var resetGraph = function (evt) {
         console.log("Resetting\q");
         d3.selectAll("svg > *").remove();
         document.getElementById("vis").innerHTML = "";
-        document.getElementById("secondary-graph").innerHTML = "";
 
         function display(data) {
             console.log("Display Data");
             displayedBubbleChart.chart('#vis', data);
-            displayedLineChart.chart(data)
         }
 
         d3.select('#reset')
@@ -121,6 +116,5 @@ var resetGraph = function (evt) {
     }
 
     displayedBubbleChart = bubbleChart;
-    displayedLineChart = scatterChart;
 
 };

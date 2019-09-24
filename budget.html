@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Budget Visualisation</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+    <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
+    <script src="ProcessData.js"></script>
+    <script src="main.js"></script>
+    <script src="BubbleChart.js"></script>
+    <script src="PieChart.js"></script>
+    <script src="ScatterGraph.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+
+<div class="row wrapper">
+
+    <!-- Sidebar Holder -->
+    <div class="col-sm-2 col-sm-2-push sidebar">
+
+        <div class="list-container">
+
+            <ul class="list-unstyled components" style="margin: 10px;">
+                <!--Node List Subelement-->
+                <li id="node-elem" class="active">
+                    <a href="#node-list">
+                        <i class="octicon octicon-git-commit"></i>
+                        Node List
+                    </a>
+                    <ul id="node-list" class="node-list">
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Visualisation -->
+    <div id="content" class="col-sm-8 offset-sm-2">
+        <div style="width: 100%;padding: 20px">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+
+                    <div class="card-block" style="width: 100%;">
+                        <h4 id="circle-vis-title" class="card-title"></h4>
+                        <p id="reset" class="reset-btn"><i class="btn btn-secondary octicon octicon-sync"></i></p>
+                        <p id="info" class="reset-btn"><i class="btn btn-secondary octicon octicon-info"></i></p>
+  
+                        <div id="toolbar" class="btn-group" role="group">
+                                <button id="all" type="button" class="btn btn-secondary">No Grouping</button>
+                                <button id="budgetstate" class="btn btn-secondary">Budget State</button>
+                            </div>
+
+                            <div id="costMeasure" class="btn-group" role="group">
+                                <button id="dollar" type="button" class="btn btn-secondary">Dollar ($)</button>
+                                <button id="time" class="btn btn-secondary">Time (Work Days)</button>
+                        </div>
+                        <div id="vis" class="border-vis">
+                        </div>
+                    </div>
+                </div>
+
+            </nav>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>
